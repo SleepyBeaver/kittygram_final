@@ -17,15 +17,15 @@ services:
     depends_on:
       - db
     volumes:
-      - static_volume:/staticfiles/
+      - static_volume:/backend_static
       - media:/app/media
 
   frontend:
     image: sleepybeaver/kittygram_frontend
     env_file: .env
-    command: cp -r /app/build/. /staticfiles/
+    command: cp -r /app/build/. /frontend_static/
     volumes:
-      - static_volume:/staticfiles/
+      - static_volume:/frontend_static
     depends_on:
       - backend
 
