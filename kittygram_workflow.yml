@@ -125,9 +125,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: |
-            docker-compose.production.yml
-            .env
+          source: "docker-compose.production.yml"
           target: "~/kittygram/"
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
@@ -137,6 +135,18 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ~/kittygram
+            
+            cat > ~/kittygram/.env <<EOF
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            DB_HOST=db
+            DB_PORT=5432
+            SECRET_KEY=${{ secrets.SECRET_KEY }}
+            DEBUG=False
+            ALLOWED_HOSTS=*
+            EOF
+
             sudo docker compose -f docker-compose.production.yml pull
             sudo docker compose -f docker-compose.production.yml down
             sudo docker compose -f docker-compose.production.yml up -d
